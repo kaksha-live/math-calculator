@@ -77,21 +77,33 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
       }
     }
     
-    // Build the expression for display and calculation
-    let displayValue = display;
-    let calcValue = display;
-    
-    // Handle constants properly
-    if (display === 'π') {
-      calcValue = 'pi';
-    } else if (display === 'e') {
-      calcValue = 'e';
+    // Check if we're chaining functions (display contains a function call)
+    if (display.includes('(') && display.includes(')')) {
+      // We're nesting functions - wrap the current display in the new function
+      const newDisplay = functionName + '(' + display + ')';
+      const newCalcExpression = mathJsFunction + '(' + display.replace(/π/g, 'pi').replace(/(?<![a-zA-Z])e(?![a-zA-Z])/g, 'e') + ')';
+      
+      setDisplay(newDisplay);
+      // Don't add to expression yet, allow for more nesting
+    } else {
+      // Regular function application
+      let displayValue = display;
+      let calcValue = display;
+      
+      // Handle constants properly
+      if (display === 'π') {
+        calcValue = 'pi';
+      } else if (display === 'e') {
+        calcValue = 'e';
+      }
+      
+      const newDisplay = functionName + '(' + displayValue + ')';
+      const newCalcExpression = mathJsFunction + '(' + calcValue + ')';
+      
+      setDisplay(newDisplay);
+      // Don't add to expression yet, allow for more operations
     }
     
-    const displayExpression = expression + functionName + '(' + displayValue + ')';
-    const calcExpression = expression + mathJsFunction + '(' + calcValue + ')';
-    
-    setExpression(calcExpression);
     setWaitingForOperand(true);
     setIsInverse(false);
   };
@@ -112,11 +124,11 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
   };
 
   const performCalculation = () => {
-    if (expression || display === 'π' || display === 'e') {
+    if (expression || display === 'π' || display === 'e' || display.includes('(')) {
       let fullExpression = expression;
       
-      // If there's no expression but we have a constant, use it directly
-      if (!expression && (display === 'π' || display === 'e')) {
+      // If there's no expression but we have a constant or function, use it directly
+      if (!expression && (display === 'π' || display === 'e' || display.includes('('))) {
         fullExpression = display;
       } else if (!waitingForOperand) {
         // If there's a pending value, add it to the expression
@@ -137,6 +149,7 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
         .replace(/\blog\(/g, 'log10(')  // Convert log button to log10 (base-10)
         .replace(/\bln\(/g, 'log(')     // Convert ln button to log (natural log)
         .replace(/cos⁻¹\(/g, 'acos(')
+        .replace(/sin⁻¹\(/g, 'asin(')
         .replace(/tan⁻¹\(/g, 'atan(')
         .replace(/10\^\(/g, 'pow(10, ')
         .replace(/e\^\(/g, 'exp(')
