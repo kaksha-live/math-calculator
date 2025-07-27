@@ -259,15 +259,8 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
         <CalculatorButton value="√" onClick={() => handleSpecialFunction('√')} variant="function">√x</CalculatorButton>
         <CalculatorButton value="^" onClick={() => inputOperator('^')} variant="function">xʸ</CalculatorButton>
         <CalculatorButton value="(" onClick={() => {
-          if (waitingForOperand || display === '0') {
-            // Just add ( to expression and show it
-            setExpression(prev => prev + '(');
-            setDisplay('(');
-          } else {
-            // Add implicit multiplication: number * (
-            setExpression(prev => prev + display + ' * (');
-            setDisplay('(');
-          }
+          // Simply add ( to the current expression and display
+          setDisplay('(');
           setWaitingForOperand(false);
         }} variant="operator">(</CalculatorButton>
 
@@ -275,12 +268,7 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
         <CalculatorButton value="AC" onClick={handleAllClear} variant="clear">AC</CalculatorButton>
         <CalculatorButton value="C" onClick={handleClear} variant="clear">C</CalculatorButton>
         <CalculatorButton value=")" onClick={() => {
-          // Add current display to expression if it's not just a parenthesis
-          if (!waitingForOperand && display !== ')' && display !== '(') {
-            setExpression(prev => prev + display + ')');
-          } else {
-            setExpression(prev => prev + ')');
-          }
+          // Simply show closing parenthesis
           setDisplay(')');
           setWaitingForOperand(true);
         }} variant="operator">)</CalculatorButton>
