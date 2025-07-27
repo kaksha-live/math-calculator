@@ -102,10 +102,22 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
 
   const inputConstant = (constant: string) => {
     if (waitingForOperand || display === '0') {
-      setDisplay(constant);
+      if (constant === 'π') {
+        setDisplay('3.14159265359');
+      } else if (constant === 'e') {
+        setDisplay('2.71828182846');
+      } else {
+        setDisplay(constant);
+      }
       setWaitingForOperand(false);
     } else {
-      setDisplay(display + constant);
+      if (constant === 'π') {
+        setDisplay(display + '3.14159265359');
+      } else if (constant === 'e') {
+        setDisplay(display + '2.71828182846');
+      } else {
+        setDisplay(display + constant);
+      }
     }
   };
 
@@ -310,7 +322,6 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
         <CalculatorButton value="6" onClick={() => inputNumber('6')}>6</CalculatorButton>
         <CalculatorButton value="+" onClick={() => inputOperator('+')} variant="operator">+</CalculatorButton>
         <CalculatorButton value="±" onClick={() => handleSpecialFunction('±')} variant="operator">±</CalculatorButton>
-        <CalculatorButton value="EXP" onClick={() => inputOperator('e')} variant="function">EXP</CalculatorButton>
         <CalculatorButton value="EXP" onClick={() => {
           // Handle scientific notation (e.g., 1.5e10)
           if (!display.includes('e') && !waitingForOperand) {
@@ -324,7 +335,7 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
         <CalculatorButton value="3" onClick={() => inputNumber('3')}>3</CalculatorButton>
         <CalculatorButton value="=" onClick={performCalculation} variant="equals" className="row-span-2">=</CalculatorButton>
         <CalculatorButton value="Ans" onClick={() => setDisplay(display)} variant="function">Ans</CalculatorButton>
-        <CalculatorButton value="Rand" onClick={() => {
+        <CalculatorButton value="mod" onClick={() => inputOperator(' mod ')} variant="function">mod</CalculatorButton>
           setDisplay(Math.random().toString());
           setWaitingForOperand(true);
         }} variant="function">Rand</CalculatorButton>
@@ -339,7 +350,6 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
             setDisplay(display + '.');
           }
         }}>.</CalculatorButton>
-        <CalculatorButton value="mod" onClick={() => inputOperator(' mod ')} variant="function">mod</CalculatorButton>
         <CalculatorButton value="abs" onClick={() => handleSpecialFunction('|x|')} variant="function">|x|</CalculatorButton>
       </div>
     </div>
