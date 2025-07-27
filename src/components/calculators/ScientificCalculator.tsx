@@ -110,11 +110,14 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
   };
 
   const performCalculation = () => {
-    if (expression) {
+    if (expression || display === 'π' || display === 'e') {
       let fullExpression = expression;
       
-      // If there's a pending value, add it to the expression
-      if (!waitingForOperand) {
+      // If there's no expression but we have a constant, use it directly
+      if (!expression && (display === 'π' || display === 'e')) {
+        fullExpression = display;
+      } else if (!waitingForOperand) {
+        // If there's a pending value, add it to the expression
         fullExpression += display;
       }
       
@@ -170,6 +173,9 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
       
       const result = calculate(fullExpression);
       setExpression('');
+      setWaitingForOperand(true);
+    } else if (display !== '0') {
+      // If no expression but there's a number, just keep it as is
       setWaitingForOperand(true);
     }
   };
