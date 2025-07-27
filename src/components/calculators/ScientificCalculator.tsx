@@ -267,7 +267,14 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
         <CalculatorButton value="x²" onClick={() => handleSpecialFunction('x²')} variant="function">x²</CalculatorButton>
         <CalculatorButton value="√" onClick={() => handleSpecialFunction('√')} variant="function">√x</CalculatorButton>
         <CalculatorButton value="^" onClick={() => inputOperator('^')} variant="function">xʸ</CalculatorButton>
-        <CalculatorButton value="(" onClick={() => inputNumber('(')} variant="operator">(</CalculatorButton>
+        <CalculatorButton value="(" onClick={() => {
+          if (waitingForOperand || display === '0') {
+            setDisplay('(');
+            setWaitingForOperand(false);
+          } else {
+            setDisplay(display + '(');
+          }
+        }} variant="operator">(</CalculatorButton>
 
         {/* Row 3 */}
         <CalculatorButton value="AC" onClick={handleAllClear} variant="clear">AC</CalculatorButton>
