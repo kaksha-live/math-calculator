@@ -129,6 +129,7 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
       
       // Convert scientific functions to mathjs format
       fullExpression = fullExpression
+        .replace(/\bln\(/g, 'log(')
         .replace(/sin⁻¹\(/g, 'asin(')
         .replace(/cos⁻¹\(/g, 'acos(')
         .replace(/tan⁻¹\(/g, 'atan(')
@@ -162,7 +163,7 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
           .replace(/atan\(([^)]+)\)/g, '(atan($1) * 180 / pi)');
       }
       
-      // Fix log to be base-10 logarithm
+      // Fix log10 to be base-10 logarithm (after ln conversion)
       fullExpression = fullExpression.replace(/\blog\(/g, 'log10(');
       
       // Fix power function syntax for mathjs
