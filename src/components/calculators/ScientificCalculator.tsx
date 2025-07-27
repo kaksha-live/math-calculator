@@ -75,9 +75,21 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
       }
     }
     
-    // Build the expression for display
-    const newExpression = expression + functionName + '(' + display + ')';
-    setExpression(newExpression);
+    // Build the expression for display and calculation
+    let displayValue = display;
+    let calcValue = display;
+    
+    // Handle constants properly
+    if (display === 'π') {
+      calcValue = 'pi';
+    } else if (display === 'e') {
+      calcValue = 'e';
+    }
+    
+    const displayExpression = expression + functionName + '(' + displayValue + ')';
+    const calcExpression = expression + mathJsFunction + '(' + calcValue + ')';
+    
+    setExpression(calcExpression);
     setWaitingForOperand(true);
     setIsInverse(false);
   };
@@ -106,6 +118,11 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
         fullExpression += display;
       }
       
+      // Replace constants first, before other transformations
+      fullExpression = fullExpression
+        .replace(/π/g, 'pi')
+        .replace(/\be\b/g, 'e');
+      
       // Convert scientific functions to mathjs format
       fullExpression = fullExpression
         .replace(/sin⁻¹\(/g, 'asin(')
@@ -114,8 +131,7 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
         .replace(/10\^\(/g, 'pow(10, ')
         .replace(/e\^\(/g, 'exp(')
         .replace(/(\d+)!/g, 'factorial($1)')
-        .replace(/π/g, 'pi')
-        .replace(/\be\b/g, 'e');
+        .replace(/(\d+)!/g, 'factorial($1)');
       
       // Handle degree mode for trig functions
       if (angleMode === 'DEG') {
