@@ -135,11 +135,11 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
       
       // Handle degree mode for trig functions
       if (angleMode === 'DEG') {
-        // Convert all trig function arguments to radians (multiply by pi/180)
-        // This handles both direct numbers and nested functions
-        fullExpression = fullExpression.replace(/sin\(([^)]+)\)/g, 'sin(($1) * pi / 180)');
-        fullExpression = fullExpression.replace(/cos\(([^)]+)\)/g, 'cos(($1) * pi / 180)');
-        fullExpression = fullExpression.replace(/tan\(([^)]+)\)/g, 'tan(($1) * pi / 180)');
+        // For nested functions, we need to be more careful about degree conversion
+        // Only convert the innermost arguments that are actual angle values
+        fullExpression = fullExpression.replace(/sin\(([^()]+)\)/g, 'sin(($1) * pi / 180)');
+        fullExpression = fullExpression.replace(/cos\(([^()]+)\)/g, 'cos(($1) * pi / 180)');
+        fullExpression = fullExpression.replace(/tan\(([^()]+)\)/g, 'tan(($1) * pi / 180)');
         
         // Handle inverse trig functions (output angle in degrees)
         fullExpression = fullExpression
@@ -259,14 +259,15 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
         <CalculatorButton value="√" onClick={() => handleSpecialFunction('√')} variant="function">√x</CalculatorButton>
         <CalculatorButton value="^" onClick={() => inputOperator('^')} variant="function">xʸ</CalculatorButton>
         <CalculatorButton value="(" onClick={() => {
-          // Add opening parenthesis to expression without multiplying by display
-          if (waitingForOperand || display === '0') {
+          // Simply add opening parenthesis to the expression
+          if (waitingForOperand) {
             setExpression(expression + '(');
+            setDisplay('0');
           } else {
-            // If there's a number, multiply it by the parentheses content
-            setExpression(expression + display + ' * (');
+            // Add the current display and then the opening parenthesis
+            setExpression(expression + display + '(');
+            setDisplay('0');
           }
-          setDisplay('0');
           setWaitingForOperand(false);
         }} variant="operator">(</CalculatorButton>
 
@@ -274,13 +275,14 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
         <CalculatorButton value="AC" onClick={handleAllClear} variant="clear">AC</CalculatorButton>
         <CalculatorButton value="C" onClick={handleClear} variant="clear">C</CalculatorButton>
         <CalculatorButton value=")" onClick={() => {
-          // Add closing parenthesis to expression
-          if (!waitingForOperand && display !== '0') {
+          // Add closing parenthesis
+          if (!waitingForOperand) {
             setExpression(expression + display + ')');
+            setWaitingForOperand(true);
           } else {
             setExpression(expression + ')');
+            setWaitingForOperand(true);
           }
-          setWaitingForOperand(true);
         }} variant="operator">)</CalculatorButton>
         <CalculatorButton value="/" onClick={() => inputOperator('/')} variant="operator">÷</CalculatorButton>
         <CalculatorButton value="*" onClick={() => inputOperator('*')} variant="operator">×</CalculatorButton>
