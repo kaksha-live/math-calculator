@@ -57,13 +57,14 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
   const inputOpenParenthesis = () => {
     // If there's a number in display and we're not waiting for operand, add multiplication
     if (!waitingForOperand && display !== '0' && display !== '') {
-      setExpression(expression + display + ' * (');
-      setDisplayExpression(displayExpression + display + ' * (');
+      const newExpression = expression + display + ' * ';
+      const newDisplayExpression = displayExpression + display + ' * ';
     } else {
       setExpression(expression + '(');
-      setDisplayExpression(displayExpression + '(');
-    }
-    
+    // Just add the opening parenthesis once
+    const openParen = '(';
+    setExpression(prev => prev + openParen);
+    setDisplayExpression(prev => prev + openParen);
     setOpenParenCount(openParenCount + 1);
     setDisplay('(');
     setWaitingForOperand(false);
@@ -72,9 +73,10 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
   const inputCloseParenthesis = () => {
     if (openParenCount === 0) return; // No matching open parenthesis
     
-    // Add current display and closing parenthesis to both expressions
-    const newExpression = expression + display + ')';
-    const newDisplayExpression = displayExpression + display + ')';
+    // Add current display to expressions, then add closing parenthesis
+    const currentValue = waitingForOperand ? '' : display;
+    const newExpression = expression + currentValue + ')';
+    const newDisplayExpression = displayExpression + currentValue + ')';
     
     setExpression(newExpression);
     setDisplayExpression(newDisplayExpression);
