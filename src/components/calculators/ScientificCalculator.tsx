@@ -102,22 +102,10 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
 
   const inputConstant = (constant: string) => {
     if (waitingForOperand || display === '0') {
-      if (constant === 'π') {
-        setDisplay('3.14159265359');
-      } else if (constant === 'e') {
-        setDisplay('2.71828182846');
-      } else {
-        setDisplay(constant);
-      }
+      setDisplay(constant);
       setWaitingForOperand(false);
     } else {
-      if (constant === 'π') {
-        setDisplay(display + '3.14159265359');
-      } else if (constant === 'e') {
-        setDisplay(display + '2.71828182846');
-      } else {
-        setDisplay(display + constant);
-      }
+      setDisplay(display + constant);
     }
   };
 
