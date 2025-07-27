@@ -259,14 +259,14 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
         <CalculatorButton value="√" onClick={() => handleSpecialFunction('√')} variant="function">√x</CalculatorButton>
         <CalculatorButton value="^" onClick={() => inputOperator('^')} variant="function">xʸ</CalculatorButton>
         <CalculatorButton value="(" onClick={() => {
-          // Simply add opening parenthesis to the expression
-          if (waitingForOperand) {
+          if (waitingForOperand || display === '0') {
+            // Start fresh with just the opening parenthesis
             setExpression(expression + '(');
-            setDisplay('0');
+            setDisplay('(');
           } else {
-            // Add the current display and then the opening parenthesis
-            setExpression(expression + display + '(');
-            setDisplay('0');
+            // Add current display to expression, then start new with (
+            setExpression(expression + display + ' * (');
+            setDisplay('(');
           }
           setWaitingForOperand(false);
         }} variant="operator">(</CalculatorButton>
