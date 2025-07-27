@@ -61,6 +61,7 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
       const newDisplayExpression = displayExpression + display + ' * ';
     } else {
       setExpression(expression + '(');
+    }
     // Just add the opening parenthesis once
     const openParen = '(';
     setExpression(prev => prev + openParen);
