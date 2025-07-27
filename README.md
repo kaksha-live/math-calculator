@@ -210,11 +210,20 @@ src/
 | **INV** | Toggle → functions change | sin↔sin⁻¹, etc. |
 
 ## 🧪 **Complex Test Cases**
-1. **Nested Functions**: `sin(cos(45))` → DEG mode → `≈0.525`
+1. **Nested Functions**: `sin(cos(45))` → DEG mode → `0.012341028215`
 2. **Mixed Operations**: `2^3 + sqrt(16) - log(100)` → `8 + 4 - 2 = 10`
 3. **Parentheses**: `(2 + 3) * (4 - 1)` → `5 * 3 = 15`
 4. **Constants**: `π * e^2` → `≈22.87`
-5. **Scientific Notation**: `1.5e3 + 500` → `2000`
+5. **Pi with Functions**: `sin(cos(π))` → DEG mode → `0.017426180743`
+6. **Scientific Notation**: `1.5e3 + 500` → `2000`
+
+### **Additional Complex Function Tests**
+| Input Sequence | Expected Result | Notes |
+|----------------|-----------------|-------|
+| `45` → `sin` → `cos` → `=` | `0.012341028215` | sin(cos(45°)) in DEG mode |
+| `π` → `cos` → `sin` → `=` | `0.017426180743` | sin(cos(π°)) in DEG mode |
+| `30` → `cos` → `sin` → `tan` → `=` | TBD | Triple nested function |
+| `π` → `sin` → `cos` → `=` | TBD | cos(sin(π°)) in DEG mode |
 
 ## 🎯 Key Components
 
