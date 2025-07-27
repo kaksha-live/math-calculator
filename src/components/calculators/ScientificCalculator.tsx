@@ -34,7 +34,7 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
       if (num === '.' && display.includes('.')) {
         return; // Don't add multiple decimal points
       }
-      if (display === '0' && num !== '.') {
+      if ((display === '0' || display === '(' || display === ')') && num !== '.') {
         setDisplay(num);
       } else {
         setDisplay(display + num);
