@@ -259,13 +259,15 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
         <CalculatorButton value="√" onClick={() => handleSpecialFunction('√')} variant="function">√x</CalculatorButton>
         <CalculatorButton value="^" onClick={() => inputOperator('^')} variant="function">xʸ</CalculatorButton>
         <CalculatorButton value="(" onClick={() => {
-          // If we have a number in display and not waiting for operand, add it to expression first
-          if (!waitingForOperand && display !== '0' && display !== '(') {
-            setExpression(expression + display + ' * ');
+          if (waitingForOperand || display === '0') {
+            // Just add ( to expression and show it
+            setExpression(prev => prev + '(');
+            setDisplay('(');
+          } else {
+            // Add implicit multiplication: number * (
+            setExpression(prev => prev + display + ' * (');
+            setDisplay('(');
           }
-          // Add opening parenthesis to expression
-          setExpression(prev => prev + '(');
-          setDisplay('(');
           setWaitingForOperand(false);
         }} variant="operator">(</CalculatorButton>
 
