@@ -67,7 +67,7 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
     setExpression(prev => prev + '(');
     setDisplayExpression(prev => prev + '(');
     setOpenParenCount(openParenCount + 1);
-    setDisplay('('); // This shows just one ( in the bottom display
+    setDisplay('');
     setWaitingForOperand(false);
   };
 
@@ -82,7 +82,7 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
     setExpression(newExpression);
     setDisplayExpression(newDisplayExpression);
     setOpenParenCount(openParenCount - 1);
-    setDisplay(')');
+    setDisplay('');
     setWaitingForOperand(true);
   };
   const inputFunction = (func: string) => {
