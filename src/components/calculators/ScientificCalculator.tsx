@@ -22,6 +22,8 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
   recallLastResult,
 }) => {
   const [expression, setExpression] = useState('');
+  const [parenthesesStack, setParenthesesStack] = useState<string[]>([]);
+  const [currentLevel, setCurrentLevel] = useState('');
   const [isInverse, setIsInverse] = useState(false);
   const [angleMode, setAngleMode] = useState<'DEG' | 'RAD'>('DEG');
   const [waitingForOperand, setWaitingForOperand] = useState(false);
@@ -34,7 +36,7 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
       if (num === '.' && display.includes('.')) {
         return; // Don't add multiple decimal points
       }
-      if ((display === '0' || display === '(' || display === ')') && num !== '.') {
+      if (display === '0' && num !== '.') {
         setDisplay(num);
       } else {
         setDisplay(display + num);
@@ -43,11 +45,45 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
   };
 
   const inputOperator = (op: string) => {
-    const newExpression = expression + display + ' ' + op + ' ';
+    // Build the full expression including current level
+    const fullCurrentExpression = currentLevel + display;
+    const newExpression = expression + fullCurrentExpression + ' ' + op + ' ';
     setExpression(newExpression);
+    setCurrentLevel('');
     setWaitingForOperand(true);
   };
 
+  const inputOpenParenthesis = () => {
+    // If there's a number in display, add implicit multiplication
+    if (!waitingForOperand && display !== '0' && display !== '') {
+      const fullCurrentExpression = currentLevel + display;
+      setExpression(expression + fullCurrentExpression + ' * ');
+    }
+    
+    // Push current state to stack
+    setParenthesesStack([...parenthesesStack, expression]);
+    setExpression(expression + currentLevel);
+    setCurrentLevel('(');
+    setDisplay('');
+    setWaitingForOperand(false);
+  };
+
+  const inputCloseParenthesis = () => {
+    if (parenthesesStack.length === 0) return; // No matching open parenthesis
+    
+    // Complete current level
+    const fullCurrentExpression = currentLevel + display + ')';
+    
+    // Pop from stack
+    const previousExpression = parenthesesStack[parenthesesStack.length - 1];
+    setParenthesesStack(parenthesesStack.slice(0, -1));
+    
+    // Update expression and display
+    setExpression(previousExpression);
+    setCurrentLevel(fullCurrentExpression);
+    setDisplay(')');
+    setWaitingForOperand(true);
+  };
   const inputFunction = (func: string) => {
     let functionName = func;
     let mathJsFunction = func;
@@ -86,8 +122,9 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
   };
 
   const inputFactorial = () => {
-    const newExpression = expression + display + '!';
-    setExpression(newExpression);
+    const fullCurrentExpression = currentLevel + display + '!';
+    setCurrentLevel(fullCurrentExpression);
+    setDisplay(display + '!');
     setWaitingForOperand(true);
   };
 
@@ -100,63 +137,60 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
     }
   };
 
+  const getFullExpression = () => {
+    return expression + currentLevel + display;
+  };
+
   const performCalculation = () => {
-    if (expression || display === 'π' || display === 'e' || display.includes('(')) {
-      let fullExpression = expression;
-      
-      // If there's no expression but we have a constant or function, use it directly
-      if (!expression && (display === 'π' || display === 'e' || display.includes('('))) {
-        fullExpression = display;
-      } else if (!waitingForOperand) {
-        // If there's a pending value, add it to the expression
-        fullExpression += display;
-      }
-      
-      console.log('Original expression:', fullExpression);
-      
-      // Replace constants first, before other transformations
-      fullExpression = fullExpression
-        .replace(/π/g, 'pi')
-        .replace(/(?<![a-zA-Z])e(?![a-zA-Z])/g, 'e');
-      
-      console.log('After constants:', fullExpression);
-      
-      // Convert scientific functions to mathjs format
-      fullExpression = fullExpression
-        .replace(/\blog\(/g, 'log10(')  // Convert log button to log10 (base-10)
-        .replace(/\bln\(/g, 'log(')     // Convert ln button to log (natural log)
-        .replace(/cos⁻¹\(/g, 'acos(')
-        .replace(/sin⁻¹\(/g, 'asin(')
-        .replace(/tan⁻¹\(/g, 'atan(')
-        .replace(/10\^\(/g, 'pow(10, ')
-        .replace(/e\^\(/g, 'exp(')
-        .replace(/(\d+)!/g, 'factorial($1)')
-        .replace(/(\d+)!/g, 'factorial($1)');
-      
-      // Handle degree mode for trig functions
-      if (angleMode === 'DEG') {
-        // For nested functions, we need to be more careful about degree conversion
-        // Only convert the innermost arguments that are actual angle values
-        fullExpression = fullExpression.replace(/sin\(([^()]+)\)/g, 'sin(($1) * pi / 180)');
-        fullExpression = fullExpression.replace(/cos\(([^()]+)\)/g, 'cos(($1) * pi / 180)');
-        fullExpression = fullExpression.replace(/tan\(([^()]+)\)/g, 'tan(($1) * pi / 180)');
-        
-        // Handle inverse trig functions (output angle in degrees)
-        fullExpression = fullExpression
-          .replace(/asin\(([^)]+)\)/g, '(asin($1) * 180 / pi)')
-          .replace(/acos\(([^)]+)\)/g, '(acos($1) * 180 / pi)')
-          .replace(/atan\(([^)]+)\)/g, '(atan($1) * 180 / pi)');
-      }
-      
-      console.log('After function conversion:', fullExpression);
-      
-      const result = calculate(fullExpression);
-      setExpression('');
-      setWaitingForOperand(true);
-    } else if (display !== '0') {
-      // If no expression but there's a number, just keep it as is
-      setWaitingForOperand(true);
+    let fullExpression = getFullExpression();
+    
+    if (fullExpression.trim() === '') {
+      fullExpression = display;
     }
+      
+    console.log('Original expression:', fullExpression);
+      
+    // Replace constants first, before other transformations
+    fullExpression = fullExpression
+      .replace(/π/g, 'pi')
+      .replace(/(?<![a-zA-Z])e(?![a-zA-Z])/g, 'e');
+      
+    console.log('After constants:', fullExpression);
+      
+    // Convert scientific functions to mathjs format
+    fullExpression = fullExpression
+      .replace(/\blog\(/g, 'log10(')  // Convert log button to log10 (base-10)
+      .replace(/\bln\(/g, 'log(')     // Convert ln button to log (natural log)
+      .replace(/cos⁻¹\(/g, 'acos(')
+      .replace(/sin⁻¹\(/g, 'asin(')
+      .replace(/tan⁻¹\(/g, 'atan(')
+      .replace(/10\^\(/g, 'pow(10, ')
+      .replace(/e\^\(/g, 'exp(')
+      .replace(/(\d+)!/g, 'factorial($1)')
+      .replace(/(\d+)!/g, 'factorial($1)');
+      
+    // Handle degree mode for trig functions
+    if (angleMode === 'DEG') {
+      // For nested functions, we need to be more careful about degree conversion
+      // Only convert the innermost arguments that are actual angle values
+      fullExpression = fullExpression.replace(/sin\(([^()]+)\)/g, 'sin(($1) * pi / 180)');
+      fullExpression = fullExpression.replace(/cos\(([^()]+)\)/g, 'cos(($1) * pi / 180)');
+      fullExpression = fullExpression.replace(/tan\(([^()]+)\)/g, 'tan(($1) * pi / 180)');
+        
+      // Handle inverse trig functions (output angle in degrees)
+      fullExpression = fullExpression
+        .replace(/asin\(([^)]+)\)/g, '(asin($1) * 180 / pi)')
+        .replace(/acos\(([^)]+)\)/g, '(acos($1) * 180 / pi)')
+        .replace(/atan\(([^)]+)\)/g, '(atan($1) * 180 / pi)');
+    }
+      
+    console.log('After function conversion:', fullExpression);
+      
+    const result = calculate(fullExpression);
+    setExpression('');
+    setCurrentLevel('');
+    setParenthesesStack([]);
+    setWaitingForOperand(true);
   };
 
   const handleSpecialFunction = (func: string) => {
@@ -203,19 +237,25 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
   const handleClear = () => {
     clearDisplay();
     setExpression('');
+    setCurrentLevel('');
+    setParenthesesStack([]);
     setWaitingForOperand(false);
   };
 
   const handleAllClear = () => {
     clearAll();
     setExpression('');
+    setCurrentLevel('');
+    setParenthesesStack([]);
     setWaitingForOperand(false);
     setIsInverse(false);
   };
 
+  // Create display expression for user
+  const displayExpression = expression + currentLevel + (waitingForOperand ? '' : display);
   return (
     <div className="max-w-2xl mx-auto">
-      <Display value={display} memory={memory} expression={expression} />
+      <Display value={display} memory={memory} expression={displayExpression} />
       
       {/* Mode indicators */}
       <div className="flex gap-2 mb-4 text-sm">
@@ -258,20 +298,12 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
         <CalculatorButton value="x²" onClick={() => handleSpecialFunction('x²')} variant="function">x²</CalculatorButton>
         <CalculatorButton value="√" onClick={() => handleSpecialFunction('√')} variant="function">√x</CalculatorButton>
         <CalculatorButton value="^" onClick={() => inputOperator('^')} variant="function">xʸ</CalculatorButton>
-        <CalculatorButton value="(" onClick={() => {
-          // Simply add ( to the current expression and display
-          setDisplay('(');
-          setWaitingForOperand(false);
-        }} variant="operator">(</CalculatorButton>
+        <CalculatorButton value="(" onClick={inputOpenParenthesis} variant="operator">(</CalculatorButton>
 
         {/* Row 3 */}
         <CalculatorButton value="AC" onClick={handleAllClear} variant="clear">AC</CalculatorButton>
         <CalculatorButton value="C" onClick={handleClear} variant="clear">C</CalculatorButton>
-        <CalculatorButton value=")" onClick={() => {
-          // Simply show closing parenthesis
-          setDisplay(')');
-          setWaitingForOperand(true);
-        }} variant="operator">)</CalculatorButton>
+        <CalculatorButton value=")" onClick={inputCloseParenthesis} variant="operator">)</CalculatorButton>
         <CalculatorButton value="/" onClick={() => inputOperator('/')} variant="operator">÷</CalculatorButton>
         <CalculatorButton value="*" onClick={() => inputOperator('*')} variant="operator">×</CalculatorButton>
         <CalculatorButton value="DEL" onClick={() => {
