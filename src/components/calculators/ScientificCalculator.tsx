@@ -63,11 +63,11 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
       setExpression(expression + '(');
     }
     // Just add the opening parenthesis once
-    const openParen = '(';
-    setExpression(prev => prev + openParen);
-    setDisplayExpression(prev => prev + openParen);
+    // Add opening parenthesis only to expressions, not display
+    setExpression(prev => prev + '(');
+    setDisplayExpression(prev => prev + '(');
     setOpenParenCount(openParenCount + 1);
-    setDisplay('(');
+    setDisplay('('); // This shows just one ( in the bottom display
     setWaitingForOperand(false);
   };
 
