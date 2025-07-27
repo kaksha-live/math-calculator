@@ -5,6 +5,7 @@ import { CalculationHistory, CalculatorMode } from '../types/calculator';
 export const useCalculator = () => {
   const [display, setDisplay] = useState('0');
   const [memory, setMemory] = useState(0);
+  const [lastResult, setLastResult] = useState('0');
   const [history, setHistory] = useState<CalculationHistory[]>([]);
   const [mode, setMode] = useState<CalculatorMode>('standard');
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -43,6 +44,7 @@ export const useCalculator = () => {
       
       addToHistory(expression, resultStr);
       setDisplay(resultStr);
+      setLastResult(resultStr);
       return resultStr;
     } catch (error) {
       console.error('Calculation error:', error);
@@ -83,6 +85,9 @@ export const useCalculator = () => {
     setIsDarkMode(prev => !prev);
   }, []);
 
+  const recallLastResult = useCallback(() => {
+    setDisplay(lastResult);
+  }, [lastResult]);
   return {
     display,
     setDisplay,
@@ -91,6 +96,7 @@ export const useCalculator = () => {
     mode,
     setMode,
     isDarkMode,
+    lastResult,
     calculate,
     clearDisplay,
     clearAll,
@@ -101,5 +107,6 @@ export const useCalculator = () => {
     toggleDarkMode,
     addToHistory,
     clearHistory,
+    recallLastResult,
   };
 };

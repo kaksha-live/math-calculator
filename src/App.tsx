@@ -28,6 +28,7 @@ function App() {
     memoryClear,
     toggleDarkMode,
     clearHistory,
+    recallLastResult,
   } = calculator;
 
   const handleHistoryItemSelect = (item: any) => {
@@ -100,6 +101,7 @@ function App() {
                 calculate={calculate}
                 clearDisplay={clearDisplay}
                 clearAll={clearAll}
+                recallLastResult={recallLastResult}
               />
             )}
             

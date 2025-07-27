@@ -9,6 +9,7 @@ interface ScientificCalculatorProps {
   calculate: (expression: string) => string;
   clearDisplay: () => void;
   clearAll: () => void;
+  recallLastResult: () => void;
 }
 
 export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
@@ -18,6 +19,7 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
   calculate,
   clearDisplay,
   clearAll,
+  recallLastResult,
 }) => {
   const [expression, setExpression] = useState('');
   const [isInverse, setIsInverse] = useState(false);
@@ -337,7 +339,7 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
         <CalculatorButton value="2" onClick={() => inputNumber('2')}>2</CalculatorButton>
         <CalculatorButton value="3" onClick={() => inputNumber('3')}>3</CalculatorButton>
         <CalculatorButton value="=" onClick={performCalculation} variant="equals" className="row-span-2">=</CalculatorButton>
-        <CalculatorButton value="Ans" onClick={() => setDisplay(display)} variant="function">Ans</CalculatorButton>
+        <CalculatorButton value="Ans" onClick={recallLastResult} variant="function">Ans</CalculatorButton>
         <CalculatorButton value="mod" onClick={() => inputOperator(' mod ')} variant="function">mod</CalculatorButton>
         <CalculatorButton value="Rand" onClick={() => {
           setDisplay(Math.random().toString());
