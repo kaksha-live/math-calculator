@@ -41,18 +41,41 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
 
   const inputFunction = (func: string) => {
     let functionName = func;
+    let mathJsFunction = func;
+    
     if (isInverse) {
       switch (func) {
-        case 'sin': functionName = 'asin'; break;
-        case 'cos': functionName = 'acos'; break;
-        case 'tan': functionName = 'atan'; break;
-        case 'log': functionName = '10^'; break;
-        case 'ln': functionName = 'exp'; break;
+        case 'sin': 
+          functionName = 'sin⁻¹';
+          mathJsFunction = 'asin';
+          break;
+        case 'cos': 
+          functionName = 'cos⁻¹';
+          mathJsFunction = 'acos';
+          break;
+        case 'tan': 
+          functionName = 'tan⁻¹';
+          mathJsFunction = 'atan';
+          break;
+        case 'log': 
+          functionName = '10^';
+          mathJsFunction = '10^';
+          break;
+        case 'ln': 
+          functionName = 'e^';
+          mathJsFunction = 'exp';
+          break;
       }
     }
     
-    const newExpression = expression + functionName + '(' + display + ')';
-    setExpression(newExpression);
+    // For display purposes, show the function name
+    const displayExpression = expression + functionName + '(' + display + ')';
+    
+    // For calculation purposes, use mathjs function name
+    const calculationExpression = expression + mathJsFunction + '(' + display + ')';
+    
+    // Store both for proper display and calculation
+    setExpression(displayExpression);
     setWaitingForOperand(true);
     setIsInverse(false);
   };
@@ -77,13 +100,13 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
       
       // Convert scientific functions to mathjs format
       fullExpression = fullExpression
-        .replace(/asin\(/g, 'asin(')
-        .replace(/acos\(/g, 'acos(')
-        .replace(/atan\(/g, 'atan(')
-        .replace(/10\^\(/g, '10^(')
-        .replace(/exp\(/g, 'exp(')
+        .replace(/sin⁻¹\(/g, 'asin(')
+        .replace(/cos⁻¹\(/g, 'acos(')
+        .replace(/tan⁻¹\(/g, 'atan(')
+        .replace(/10\^\(/g, 'pow(10, ')
+        .replace(/e\^\(/g, 'exp(')
         .replace(/π/g, 'pi')
-        .replace(/e(?![x\d])/g, 'e');
+        .replace(/e(?![x\d^])/g, 'e');
       
       // Handle degree mode for trig functions
       if (angleMode === 'DEG') {
@@ -95,6 +118,9 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
           .replace(/acos\(([^)]+)\)/g, 'acos($1) * 180 / pi')
           .replace(/atan\(([^)]+)\)/g, 'atan($1) * 180 / pi');
       }
+      
+      // Fix power function syntax for mathjs
+      fullExpression = fullExpression.replace(/pow\(10, ([^)]+)\)/g, 'pow(10, $1)');
       
       const result = calculate(fullExpression);
       setExpression('');
