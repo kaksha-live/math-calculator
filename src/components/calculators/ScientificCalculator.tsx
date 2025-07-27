@@ -129,8 +129,8 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
       
       // Convert scientific functions to mathjs format
       fullExpression = fullExpression
-        .replace(/\bln\(/g, 'log(')
-        .replace(/sin⁻¹\(/g, 'asin(')
+        .replace(/\blog\(/g, 'log10(')  // Convert log button to log10 (base-10)
+        .replace(/\bln\(/g, 'log(')     // Convert ln button to log (natural log)
         .replace(/cos⁻¹\(/g, 'acos(')
         .replace(/tan⁻¹\(/g, 'atan(')
         .replace(/10\^\(/g, 'pow(10, ')
