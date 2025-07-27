@@ -1,6 +1,6 @@
-# All-in-One Calculator
+# SwiftCalc
 
-A comprehensive, professional-grade calculator suite built with React, TypeScript, and Tailwind CSS. This application provides multiple calculator modes including Standard, Scientific, Graphing, Financial, and Unit Conversion calculators.
+A comprehensive, professional-grade calculator suite built with React, TypeScript, and Tailwind CSS. SwiftCalc provides multiple calculator modes including Standard, Scientific, Graphing, Financial, and Unit Conversion calculators - all in one swift, elegant interface.
 
 ![Calculator Suite](https://images.pexels.com/photos/6238297/pexels-photo-6238297.jpeg?auto=compress&cs=tinysrgb&w=1200&h=400&fit=crop)
 
@@ -37,8 +37,8 @@ A comprehensive, professional-grade calculator suite built with React, TypeScrip
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-username/all-in-one-calculator.git
-   cd all-in-one-calculator
+   git clone https://github.com/seehiong/swift-calc.git
+   cd swift-calc
    ```
 
 2. **Install dependencies**
@@ -193,6 +193,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
+- Developed by [seehiong](https://github.com/seehiong)
 - Built with [Bolt.new](https://bolt.new/) - AI-powered development platform
 - Mathematical calculations powered by [Math.js](https://mathjs.org/)
 - Charts rendered with [Chart.js](https://www.chartjs.org/)
@@ -202,10 +203,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📞 Support
 
 If you encounter any issues or have questions, please:
-1. Check the existing issues on GitHub
-2. Create a new issue with detailed information
+1. Check the existing [issues on GitHub](https://github.com/seehiong/swift-calc/issues)
+2. Create a [new issue](https://github.com/seehiong/swift-calc/issues/new) with detailed information
 3. Include steps to reproduce any bugs
 
 ---
-
-**Made with ❤️ using React, TypeScript, and modern web technologies**

@@ -53,7 +53,7 @@ function App() {
             </div>
             <div>
               <h1 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
-                All-in-One Calculator
+                SwiftCalc
               </h1>
               <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                 Professional calculator suite for all your needs
@@ -138,7 +138,7 @@ function App() {
         {/* Footer */}
         <footer className={`mt-12 text-center text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
           <div className="flex items-center justify-center gap-2 mb-2">
-            <p>© 2025 All-in-One Calculator. Built with React, TypeScript & Tailwind CSS.</p>
+            <p>© 2025 SwiftCalc. Built with React, TypeScript & Tailwind CSS.</p>
             <span className="text-gray-500">•</span>
             <div className="flex items-center gap-1">
               <span>Powered by</span>
