@@ -117,13 +117,25 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
       
       // Handle degree mode for trig functions
       if (angleMode === 'DEG') {
+        // Handle forward trig functions (input angle in degrees)
+        fullExpression = fullExpression.replace(/\bsin\(([^)]+)\)/g, (match, angle) => {
+          if (!match.includes('asin')) return `sin(${angle} * pi / 180)`;
+          return match;
+        });
+        fullExpression = fullExpression.replace(/\bcos\(([^)]+)\)/g, (match, angle) => {
+          if (!match.includes('acos')) return `cos(${angle} * pi / 180)`;
+          return match;
+        });
+        fullExpression = fullExpression.replace(/\btan\(([^)]+)\)/g, (match, angle) => {
+          if (!match.includes('atan')) return `tan(${angle} * pi / 180)`;
+          return match;
+        });
+        
+        // Handle inverse trig functions (output angle in degrees)
         fullExpression = fullExpression
-          .replace(/sin\(([^)]+)\)/g, 'sin($1 * pi / 180)')
-          .replace(/cos\(([^)]+)\)/g, 'cos($1 * pi / 180)')
-          .replace(/tan\(([^)]+)\)/g, 'tan($1 * pi / 180)')
-          .replace(/asin\(([^)]+)\)/g, 'asin($1) * 180 / pi')
-          .replace(/acos\(([^)]+)\)/g, 'acos($1) * 180 / pi')
-          .replace(/atan\(([^)]+)\)/g, 'atan($1) * 180 / pi');
+          .replace(/asin\(([^)]+)\)/g, '(asin($1) * 180 / pi)')
+          .replace(/acos\(([^)]+)\)/g, '(acos($1) * 180 / pi)')
+          .replace(/atan\(([^)]+)\)/g, '(atan($1) * 180 / pi)');
       }
       
       // Fix power function syntax for mathjs
