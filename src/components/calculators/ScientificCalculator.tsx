@@ -75,16 +75,17 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
       }
     }
     
-    // For display purposes, show the function name
-    const displayExpression = expression + functionName + '(' + display + ')';
-    
-    // For calculation purposes, use mathjs function name
-    const calculationExpression = expression + mathJsFunction + '(' + display + ')';
-    
-    // Store both for proper display and calculation
-    setExpression(displayExpression);
+    // Build the expression for display
+    const newExpression = expression + functionName + '(' + display + ')';
+    setExpression(newExpression);
     setWaitingForOperand(true);
     setIsInverse(false);
+  };
+
+  const inputFactorial = () => {
+    const newExpression = expression + display + '!';
+    setExpression(newExpression);
+    setWaitingForOperand(true);
   };
 
   const inputConstant = (constant: string) => {
@@ -112,8 +113,9 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
         .replace(/tan⁻¹\(/g, 'atan(')
         .replace(/10\^\(/g, 'pow(10, ')
         .replace(/e\^\(/g, 'exp(')
+        .replace(/(\d+)!/g, 'factorial($1)')
         .replace(/π/g, 'pi')
-        .replace(/e(?![x\d^])/g, 'e');
+        .replace(/\be\b/g, 'e');
       
       // Handle degree mode for trig functions
       if (angleMode === 'DEG') {
@@ -138,6 +140,9 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
           .replace(/atan\(([^)]+)\)/g, '(atan($1) * 180 / pi)');
       }
       
+      // Fix log to be base-10 logarithm
+      fullExpression = fullExpression.replace(/\blog\(/g, 'log10(');
+      
       // Fix power function syntax for mathjs
       fullExpression = fullExpression.replace(/pow\(10, ([^)]+)\)/g, 'pow(10, $1)');
       
@@ -161,20 +166,6 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
           break;
         case '1/x':
           result = calculate(`1/(${display})`);
-          break;
-        case 'x!':
-          const n = parseInt(display);
-          if (n < 0 || !Number.isInteger(parseFloat(display))) {
-            result = 'Error';
-          } else if (n > 170) {
-            result = 'Infinity';
-          } else {
-            let factorial = 1;
-            for (let i = 2; i <= n; i++) {
-              factorial *= i;
-            }
-            result = factorial.toString();
-          }
           break;
         case '%':
           result = (currentValue / 100).toString();
@@ -246,7 +237,7 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
         <CalculatorButton value="ln" onClick={() => inputFunction('ln')} variant="function">
           {isInverse ? 'eˣ' : 'ln'}
         </CalculatorButton>
-        <CalculatorButton value="x!" onClick={() => handleSpecialFunction('x!')} variant="function">x!</CalculatorButton>
+        <CalculatorButton value="x!" onClick={inputFactorial} variant="function">x!</CalculatorButton>
 
         {/* Row 2 - Powers and roots */}
         <CalculatorButton value="π" onClick={() => inputConstant('π')} variant="function">π</CalculatorButton>
