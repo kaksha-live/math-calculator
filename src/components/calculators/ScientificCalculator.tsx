@@ -77,32 +77,9 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
       }
     }
     
-    // Check if we're chaining functions (display contains a function call)
-    if (display.includes('(') && display.includes(')')) {
-      // We're nesting functions - wrap the current display in the new function
-      const newDisplay = functionName + '(' + display + ')';
-      const newCalcExpression = mathJsFunction + '(' + display.replace(/π/g, 'pi').replace(/(?<![a-zA-Z])e(?![a-zA-Z])/g, 'e') + ')';
-      
-      setDisplay(newDisplay);
-      // Don't add to expression yet, allow for more nesting
-    } else {
-      // Regular function application
-      let displayValue = display;
-      let calcValue = display;
-      
-      // Handle constants properly
-      if (display === 'π') {
-        calcValue = 'pi';
-      } else if (display === 'e') {
-        calcValue = 'e';
-      }
-      
-      const newDisplay = functionName + '(' + displayValue + ')';
-      const newCalcExpression = mathJsFunction + '(' + calcValue + ')';
-      
-      setDisplay(newDisplay);
-      // Don't add to expression yet, allow for more operations
-    }
+    // Always wrap the current display in the new function
+    const newDisplay = functionName + '(' + display + ')';
+    setDisplay(newDisplay);
     
     setWaitingForOperand(true);
     setIsInverse(false);
@@ -158,19 +135,10 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
       
       // Handle degree mode for trig functions
       if (angleMode === 'DEG') {
-        // Handle forward trig functions (input angle in degrees)
-        fullExpression = fullExpression.replace(/\bsin\(([^)]+)\)/g, (match, angle) => {
-          if (!match.includes('asin')) return `sin(${angle} * pi / 180)`;
-          return match;
-        });
-        fullExpression = fullExpression.replace(/\bcos\(([^)]+)\)/g, (match, angle) => {
-          if (!match.includes('acos')) return `cos(${angle} * pi / 180)`;
-          return match;
-        });
-        fullExpression = fullExpression.replace(/\btan\(([^)]+)\)/g, (match, angle) => {
-          if (!match.includes('atan')) return `tan(${angle} * pi / 180)`;
-          return match;
-        });
+        // Handle forward trig functions (input angle in degrees) - only for direct numeric values
+        fullExpression = fullExpression.replace(/\bsin\((\d+(?:\.\d+)?)\)/g, 'sin($1 * pi / 180)');
+        fullExpression = fullExpression.replace(/\bcos\((\d+(?:\.\d+)?)\)/g, 'cos($1 * pi / 180)');
+        fullExpression = fullExpression.replace(/\btan\((\d+(?:\.\d+)?)\)/g, 'tan($1 * pi / 180)');
         
         // Handle inverse trig functions (output angle in degrees)
         fullExpression = fullExpression
