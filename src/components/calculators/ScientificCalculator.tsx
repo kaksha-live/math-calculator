@@ -34,39 +34,74 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
   };
 
   const inputFunction = (func: string) => {
-    let functionName = func;
+    const currentValue = parseFloat(display);
+    let result: number;
     
-    // Handle angle conversion for trigonometric functions
-    if (['sin', 'cos', 'tan'].includes(func) && angleMode === 'DEG') {
-      functionName = `${func}(${display} * pi / 180)`;
-      const result = calculate(functionName);
-      setDisplay(result);
-      return;
-    }
-    
-    // Handle inverse functions
-    if (isInverse) {
+    try {
       switch (func) {
-        case 'sin': functionName = 'asin'; break;
-        case 'cos': functionName = 'acos'; break;
-        case 'tan': functionName = 'atan'; break;
-        case 'log': functionName = '10^'; break;
-        case 'ln': functionName = 'e^'; break;
+        case 'sin':
+          if (isInverse) {
+            result = Math.asin(currentValue);
+            if (angleMode === 'DEG') result = result * 180 / Math.PI;
+          } else {
+            const angle = angleMode === 'DEG' ? currentValue * Math.PI / 180 : currentValue;
+            result = Math.sin(angle);
+          }
+          break;
+        case 'cos':
+          if (isInverse) {
+            result = Math.acos(currentValue);
+            if (angleMode === 'DEG') result = result * 180 / Math.PI;
+          } else {
+            const angle = angleMode === 'DEG' ? currentValue * Math.PI / 180 : currentValue;
+            result = Math.cos(angle);
+          }
+          break;
+        case 'tan':
+          if (isInverse) {
+            result = Math.atan(currentValue);
+            if (angleMode === 'DEG') result = result * 180 / Math.PI;
+          } else {
+            const angle = angleMode === 'DEG' ? currentValue * Math.PI / 180 : currentValue;
+            result = Math.tan(angle);
+          }
+          break;
+        case 'log':
+          if (isInverse) {
+            result = Math.pow(10, currentValue);
+          } else {
+            result = Math.log10(currentValue);
+          }
+          break;
+        case 'ln':
+          if (isInverse) {
+            result = Math.exp(currentValue);
+          } else {
+            result = Math.log(currentValue);
+          }
+          break;
+        default:
+          return;
       }
+      
+      setDisplay(result.toString());
+      setIsInverse(false);
+    } catch (error) {
+      setDisplay('Error');
     }
-
-    const fullExpression = `${functionName}(${display})`;
-    const result = calculate(fullExpression);
-    setDisplay(result);
-    setIsInverse(false);
   };
 
   const inputConstant = (constant: string) => {
-    const constants: { [key: string]: string } = {
-      'π': 'pi',
-      'e': 'e',
-    };
-    setDisplay(constants[constant] || constant);
+    switch (constant) {
+      case 'π':
+        setDisplay(Math.PI.toString());
+        break;
+      case 'e':
+        setDisplay(Math.E.toString());
+        break;
+      default:
+        setDisplay(constant);
+    }
   };
 
   const performCalculation = () => {
@@ -98,8 +133,23 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
   };
 
   const factorial = () => {
-    const result = calculate(`${display}!`);
-    setDisplay(result);
+    const n = parseInt(display);
+    if (n < 0 || !Number.isInteger(parseFloat(display))) {
+      setDisplay('Error');
+      return;
+    }
+    
+    if (n > 170) {
+      setDisplay('Infinity');
+      return;
+    }
+    
+    let result = 1;
+    for (let i = 2; i <= n; i++) {
+      result *= i;
+    }
+    
+    setDisplay(result.toString());
   };
 
   return (
