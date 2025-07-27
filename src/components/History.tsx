@@ -74,7 +74,7 @@ export const History: React.FC<HistoryProps> = ({
             </button>
             
             {/* Expand/Collapse button for long expressions */}
-            {item.expression.length > 30 && (
+            {item.expression.length > 50 && (
               <button
                 onClick={() => setExpandedItem(expandedItem === item.id ? null : item.id)}
                 className="w-full px-3 py-2 text-xs text-blue-600 hover:bg-blue-50 border-t border-gray-100 transition-colors"
