@@ -121,9 +121,9 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
           .replace(/sin\(([^)]+)\)/g, 'sin($1 * pi / 180)')
           .replace(/cos\(([^)]+)\)/g, 'cos($1 * pi / 180)')
           .replace(/tan\(([^)]+)\)/g, 'tan($1 * pi / 180)')
-          .replace(/asin\(([^)]+)\)/g, '(asin($1) * 180 / pi)')
-          .replace(/acos\(([^)]+)\)/g, '(acos($1) * 180 / pi)')
-          .replace(/atan\(([^)]+)\)/g, '(atan($1) * 180 / pi)');
+          .replace(/asin\(([^)]+)\)/g, 'asin($1) * 180 / pi')
+          .replace(/acos\(([^)]+)\)/g, 'acos($1) * 180 / pi')
+          .replace(/atan\(([^)]+)\)/g, 'atan($1) * 180 / pi');
       }
       
       // Fix power function syntax for mathjs
