@@ -138,8 +138,6 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
         .replace(/(\d+)!/g, 'factorial($1)')
         .replace(/(\d+)!/g, 'factorial($1)');
       
-      console.log('After function conversion:', fullExpression);
-      
       // Handle degree mode for trig functions
       if (angleMode === 'DEG') {
         // Handle forward trig functions (input angle in degrees)
@@ -163,8 +161,7 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
           .replace(/atan\(([^)]+)\)/g, '(atan($1) * 180 / pi)');
       }
       
-      // Fix log10 to be base-10 logarithm (after ln conversion)
-      fullExpression = fullExpression.replace(/\blog\(/g, 'log10(');
+      console.log('After function conversion:', fullExpression);
       
       // Fix power function syntax for mathjs
       fullExpression = fullExpression.replace(/pow\(10, ([^)]+)\)/g, 'pow(10, $1)');
