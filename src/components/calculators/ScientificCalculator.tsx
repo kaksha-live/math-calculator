@@ -259,15 +259,13 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
         <CalculatorButton value="√" onClick={() => handleSpecialFunction('√')} variant="function">√x</CalculatorButton>
         <CalculatorButton value="^" onClick={() => inputOperator('^')} variant="function">xʸ</CalculatorButton>
         <CalculatorButton value="(" onClick={() => {
-          if (waitingForOperand || display === '0') {
-            // Start fresh with just the opening parenthesis
-            setExpression(expression + '(');
-            setDisplay('(');
-          } else {
-            // Add current display to expression, then start new with (
-            setExpression(expression + display + ' * (');
-            setDisplay('(');
+          // If we have a number in display and not waiting for operand, add it to expression first
+          if (!waitingForOperand && display !== '0' && display !== '(') {
+            setExpression(expression + display + ' * ');
           }
+          // Add opening parenthesis to expression
+          setExpression(prev => prev + '(');
+          setDisplay('(');
           setWaitingForOperand(false);
         }} variant="operator">(</CalculatorButton>
 
@@ -275,14 +273,14 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
         <CalculatorButton value="AC" onClick={handleAllClear} variant="clear">AC</CalculatorButton>
         <CalculatorButton value="C" onClick={handleClear} variant="clear">C</CalculatorButton>
         <CalculatorButton value=")" onClick={() => {
-          // Add closing parenthesis
-          if (!waitingForOperand) {
-            setExpression(expression + display + ')');
-            setWaitingForOperand(true);
+          // Add current display to expression if it's not just a parenthesis
+          if (!waitingForOperand && display !== ')' && display !== '(') {
+            setExpression(prev => prev + display + ')');
           } else {
-            setExpression(expression + ')');
-            setWaitingForOperand(true);
+            setExpression(prev => prev + ')');
           }
+          setDisplay(')');
+          setWaitingForOperand(true);
         }} variant="operator">)</CalculatorButton>
         <CalculatorButton value="/" onClick={() => inputOperator('/')} variant="operator">÷</CalculatorButton>
         <CalculatorButton value="*" onClick={() => inputOperator('*')} variant="operator">×</CalculatorButton>
