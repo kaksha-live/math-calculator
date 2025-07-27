@@ -336,6 +336,7 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
         <CalculatorButton value="=" onClick={performCalculation} variant="equals" className="row-span-2">=</CalculatorButton>
         <CalculatorButton value="Ans" onClick={() => setDisplay(display)} variant="function">Ans</CalculatorButton>
         <CalculatorButton value="mod" onClick={() => inputOperator(' mod ')} variant="function">mod</CalculatorButton>
+        <CalculatorButton value="Rand" onClick={() => {
           setDisplay(Math.random().toString());
           setWaitingForOperand(true);
         }} variant="function">Rand</CalculatorButton>
