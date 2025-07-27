@@ -135,10 +135,17 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
       
       // Handle degree mode for trig functions
       if (angleMode === 'DEG') {
-        // Handle forward trig functions (input angle in degrees) - only for direct numeric values
-        fullExpression = fullExpression.replace(/\bsin\((\d+(?:\.\d+)?)\)/g, 'sin($1 * pi / 180)');
-        fullExpression = fullExpression.replace(/\bcos\((\d+(?:\.\d+)?)\)/g, 'cos($1 * pi / 180)');
-        fullExpression = fullExpression.replace(/\btan\((\d+(?:\.\d+)?)\)/g, 'tan($1 * pi / 180)');
+        // In DEG mode, ALL trig function inputs should be treated as degrees
+        // This includes nested functions - the output of one trig function becomes degree input to the next
+        fullExpression = fullExpression.replace(/\bsin\(/g, 'sin(');
+        fullExpression = fullExpression.replace(/\bcos\(/g, 'cos(');
+        fullExpression = fullExpression.replace(/\btan\(/g, 'tan(');
+        
+        // Convert all trig function arguments from degrees to radians
+        // This handles both direct numbers and nested function results
+        fullExpression = fullExpression.replace(/sin\(([^)]+)\)/g, 'sin(($1) * pi / 180)');
+        fullExpression = fullExpression.replace(/cos\(([^)]+)\)/g, 'cos(($1) * pi / 180)');
+        fullExpression = fullExpression.replace(/tan\(([^)]+)\)/g, 'tan(($1) * pi / 180)');
         
         // Handle inverse trig functions (output angle in degrees)
         fullExpression = fullExpression
