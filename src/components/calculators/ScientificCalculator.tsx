@@ -197,10 +197,12 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
           break;
         case '%':
           result = (currentValue / 100).toString();
-          // EXP should input scientific notation multiplier
-          const newExpression = expression + display + 'e';
-          setExpression(newExpression);
-          setWaitingForOperand(true);
+          break;
+        case 'EXP':
+          // Handle scientific notation (e.g., 1.5e10)
+          if (!display.includes('e') && !waitingForOperand) {
+            setDisplay(display + 'e');
+          }
           return;
         case '±':
           result = display.startsWith('-') ? display.slice(1) : '-' + display;
