@@ -48,7 +48,7 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
     // Add current display to both expression and display expression
     const newExpression = expression + display + ' ' + op + ' ';
     const newDisplayExpression = displayExpression + display + ' ' + op + ' ';
-    
+
     setExpression(newExpression);
     setDisplayExpression(newDisplayExpression);
     setWaitingForOperand(true);
@@ -57,15 +57,16 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
   const inputOpenParenthesis = () => {
     // If there's a number in display and we're not waiting for operand, add multiplication
     if (!waitingForOperand && display !== '0' && display !== '') {
-      const newExpression = expression + display + ' * ';
-      const newDisplayExpression = displayExpression + display + ' * ';
+      const newExpression = expression + display + ' * (';
+      const newDisplayExpression = displayExpression + display + ' * (';
+      setExpression(newExpression);
+      setDisplayExpression(newDisplayExpression);
     } else {
-      setExpression(expression + '(');
+      // Just add the opening parenthesis
+      setExpression(prev => prev + '(');
+      setDisplayExpression(prev => prev + '(');
     }
-    // Just add the opening parenthesis once
-    // Add opening parenthesis only to expressions, not display
-    setExpression(prev => prev + '(');
-    setDisplayExpression(prev => prev + '(');
+
     setOpenParenCount(openParenCount + 1);
     setDisplay('');
     setWaitingForOperand(false);
@@ -73,12 +74,12 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
 
   const inputCloseParenthesis = () => {
     if (openParenCount === 0) return; // No matching open parenthesis
-    
+
     // Add current display to expressions, then add closing parenthesis
     const currentValue = waitingForOperand ? '' : display;
     const newExpression = expression + currentValue + ')';
     const newDisplayExpression = displayExpression + currentValue + ')';
-    
+
     setExpression(newExpression);
     setDisplayExpression(newDisplayExpression);
     setOpenParenCount(openParenCount - 1);
@@ -88,36 +89,36 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
   const inputFunction = (func: string) => {
     let functionName = func;
     let mathJsFunction = func;
-    
+
     if (isInverse) {
       switch (func) {
-        case 'sin': 
+        case 'sin':
           functionName = 'sin⁻¹';
           mathJsFunction = 'asin';
           break;
-        case 'cos': 
+        case 'cos':
           functionName = 'cos⁻¹';
           mathJsFunction = 'acos';
           break;
-        case 'tan': 
+        case 'tan':
           functionName = 'tan⁻¹';
           mathJsFunction = 'atan';
           break;
-        case 'log': 
+        case 'log':
           functionName = '10^';
           mathJsFunction = '10^';
           break;
-        case 'ln': 
+        case 'ln':
           functionName = 'e^';
           mathJsFunction = 'exp';
           break;
       }
     }
-    
+
     // Always wrap the current display in the new function
     const newDisplay = functionName + '(' + display + ')';
     setDisplay(newDisplay);
-    
+
     setWaitingForOperand(true);
     setIsInverse(false);
   };
@@ -138,20 +139,20 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
 
   const performCalculation = () => {
     let fullExpression = expression + display;
-    
+
     if (fullExpression.trim() === '') {
       fullExpression = display;
     }
-      
+
     console.log('Original expression:', fullExpression);
-      
+
     // Replace constants first, before other transformations
     fullExpression = fullExpression
       .replace(/π/g, 'pi')
       .replace(/(?<![a-zA-Z])e(?![a-zA-Z])/g, 'e');
-      
+
     console.log('After constants:', fullExpression);
-      
+
     // Convert scientific functions to mathjs format
     fullExpression = fullExpression
       .replace(/\blog\(/g, 'log10(')  // Convert log button to log10 (base-10)
@@ -163,7 +164,7 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
       .replace(/e\^\(/g, 'exp(')
       .replace(/(\d+)!/g, 'factorial($1)')
       .replace(/(\d+)!/g, 'factorial($1)');
-      
+
     // Handle degree mode for trig functions
     if (angleMode === 'DEG') {
       // For nested functions, we need to be more careful about degree conversion
@@ -171,16 +172,16 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
       fullExpression = fullExpression.replace(/sin\(([^()]+)\)/g, 'sin(($1) * pi / 180)');
       fullExpression = fullExpression.replace(/cos\(([^()]+)\)/g, 'cos(($1) * pi / 180)');
       fullExpression = fullExpression.replace(/tan\(([^()]+)\)/g, 'tan(($1) * pi / 180)');
-        
+
       // Handle inverse trig functions (output angle in degrees)
       fullExpression = fullExpression
         .replace(/asin\(([^)]+)\)/g, '(asin($1) * 180 / pi)')
         .replace(/acos\(([^)]+)\)/g, '(acos($1) * 180 / pi)')
         .replace(/atan\(([^)]+)\)/g, '(atan($1) * 180 / pi)');
     }
-      
+
     console.log('After function conversion:', fullExpression);
-      
+
     const result = calculate(fullExpression);
     setExpression('');
     setDisplayExpression('');
@@ -191,7 +192,7 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
   const handleSpecialFunction = (func: string) => {
     const currentValue = parseFloat(display);
     let result: string;
-    
+
     try {
       switch (func) {
         case 'x²':
@@ -221,7 +222,7 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
         default:
           return;
       }
-      
+
       setDisplay(result);
       setWaitingForOperand(true);
     } catch (error) {
@@ -251,7 +252,7 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
   return (
     <div className="max-w-2xl mx-auto">
       <Display value={display} memory={memory} expression={fullDisplayExpression} />
-      
+
       {/* Mode indicators */}
       <div className="flex gap-2 mb-4 text-sm">
         <button
