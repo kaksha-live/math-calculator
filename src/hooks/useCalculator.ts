@@ -25,9 +25,21 @@ export const useCalculator = () => {
       console.log('Calculating:', expression);
       const result = evaluate(expression);
       console.log('Result:', result);
-      const resultStr = typeof result === 'number' ? 
-        (Number.isInteger(result) ? result.toString() : result.toFixed(8).replace(/\.?0+$/, '')) : 
-        result.toString();
+      
+      let resultStr: string;
+      if (typeof result === 'number') {
+        if (Number.isInteger(result)) {
+          // Format integers with commas for readability
+          resultStr = result.toLocaleString();
+        } else {
+          // Format decimals, remove trailing zeros, then add commas
+          const formatted = result.toFixed(8).replace(/\.?0+$/, '');
+          const num = parseFloat(formatted);
+          resultStr = num.toLocaleString();
+        }
+      } else {
+        resultStr = result.toString();
+      }
       
       addToHistory(expression, resultStr);
       setDisplay(resultStr);
