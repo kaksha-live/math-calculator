@@ -1,4 +1,3 @@
-import React from 'react';
 import { Moon, Sun, Calculator as CalcIcon } from 'lucide-react';
 import { useCalculator } from './hooks/useCalculator';
 import { ModeSelector } from './components/ModeSelector';
@@ -29,6 +28,7 @@ function App() {
     toggleDarkMode,
     clearHistory,
     recallLastResult,
+    addToHistory,
   } = calculator;
 
   const handleHistoryItemSelect = (item: any) => {
@@ -36,11 +36,10 @@ function App() {
   };
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${
-      isDarkMode 
-        ? 'bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900' 
-        : 'bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50'
-    }`}>
+    <div className={`min-h-screen transition-colors duration-300 ${isDarkMode
+      ? 'bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900'
+      : 'bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50'
+      }`}>
       <div className="container mx-auto px-4 py-6">
         {/* Header */}
         <header className="flex flex-col sm:flex-row items-center justify-between mb-8">
@@ -57,15 +56,14 @@ function App() {
               </p>
             </div>
           </div>
-          
+
           <div className="flex items-center gap-3">
             <button
               onClick={toggleDarkMode}
-              className={`p-3 rounded-lg transition-all duration-200 ${
-                isDarkMode 
-                  ? 'bg-white/20 text-white hover:bg-white/30' 
-                  : 'bg-white/80 text-gray-700 hover:bg-white shadow-md'
-              }`}
+              className={`p-3 rounded-lg transition-all duration-200 ${isDarkMode
+                ? 'bg-white/20 text-white hover:bg-white/30'
+                : 'bg-white/80 text-gray-700 hover:bg-white shadow-md'
+                }`}
             >
               {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
             </button>
@@ -92,7 +90,7 @@ function App() {
                 memoryClear={memoryClear}
               />
             )}
-            
+
             {mode === 'scientific' && (
               <ScientificCalculator
                 display={display}
@@ -102,17 +100,18 @@ function App() {
                 clearDisplay={clearDisplay}
                 clearAll={clearAll}
                 recallLastResult={recallLastResult}
+                addToHistory={addToHistory}
               />
             )}
-            
+
             {mode === 'graphing' && (
               <GraphingCalculator calculate={calculate} />
             )}
-            
+
             {mode === 'financial' && (
               <FinancialCalculator calculate={calculate} />
             )}
-            
+
             {mode === 'conversion' && (
               <ConversionCalculator calculate={calculate} />
             )}

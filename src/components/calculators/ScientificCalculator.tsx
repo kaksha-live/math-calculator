@@ -10,6 +10,7 @@ interface ScientificCalculatorProps {
   clearDisplay: () => void;
   clearAll: () => void;
   recallLastResult: () => void;
+  addToHistory: (expression: string, result: string) => void;
 }
 
 export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
@@ -20,6 +21,7 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
   clearDisplay,
   clearAll,
   recallLastResult,
+  addToHistory,
 }) => {
   const [expression, setExpression] = useState('');
   const [displayExpression, setDisplayExpression] = useState('');
@@ -167,13 +169,12 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
 
     // Handle degree mode for trig functions
     if (angleMode === 'DEG') {
-      // For nested functions, we need to be more careful about degree conversion
-      // Only convert the innermost arguments that are actual angle values
+      // For forward trig functions (sin, cos, tan) - convert input from degrees to radians
       fullExpression = fullExpression.replace(/sin\(([^()]+)\)/g, 'sin(($1) * pi / 180)');
       fullExpression = fullExpression.replace(/cos\(([^()]+)\)/g, 'cos(($1) * pi / 180)');
       fullExpression = fullExpression.replace(/tan\(([^()]+)\)/g, 'tan(($1) * pi / 180)');
 
-      // Handle inverse trig functions (output angle in degrees)
+      // For inverse trig functions (asin, acos, atan) - convert output from radians to degrees
       fullExpression = fullExpression
         .replace(/asin\(([^)]+)\)/g, '(asin($1) * 180 / pi)')
         .replace(/acos\(([^)]+)\)/g, '(acos($1) * 180 / pi)')
@@ -182,7 +183,15 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
 
     console.log('After function conversion:', fullExpression);
 
+    // Use the display expression for history, but calculate with the mathjs expression
+    const historyExpression = displayExpression + display || display;
     const result = calculate(fullExpression);
+
+    // Update history with user-friendly expression
+    if (result !== 'Error') {
+      addToHistory(historyExpression, result);
+    }
+
     setExpression('');
     setDisplayExpression('');
     setOpenParenCount(0);

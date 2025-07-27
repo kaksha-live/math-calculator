@@ -21,12 +21,13 @@ export const useCalculator = () => {
     setHistory(prev => [newEntry, ...prev.slice(0, 49)]); // Keep last 50 entries
   }, [mode]);
 
+  // Calculate function that automatically adds to history (for simple calculations)
   const calculate = useCallback((expression: string) => {
     try {
       console.log('Calculating:', expression);
       const result = evaluate(expression);
       console.log('Result:', result);
-      
+
       let resultStr: string;
       if (typeof result === 'number') {
         if (Number.isInteger(result)) {
@@ -41,7 +42,7 @@ export const useCalculator = () => {
       } else {
         resultStr = result.toString();
       }
-      
+
       addToHistory(expression, resultStr);
       setDisplay(resultStr);
       setLastResult(resultStr);
@@ -52,6 +53,33 @@ export const useCalculator = () => {
       return 'Error';
     }
   }, [addToHistory]);
+
+  // Calculate function that doesn't add to history (for manual history control)
+  const calculateOnly = useCallback((expression: string) => {
+    try {
+      console.log('Calculating:', expression);
+      const result = evaluate(expression);
+      console.log('Result:', result);
+
+      let resultStr: string;
+      if (typeof result === 'number') {
+        if (Number.isInteger(result)) {
+          resultStr = result.toLocaleString();
+        } else {
+          const formatted = result.toFixed(8).replace(/\.?0+$/, '');
+          const num = parseFloat(formatted);
+          resultStr = num.toLocaleString();
+        }
+      } else {
+        resultStr = result.toString();
+      }
+
+      return resultStr;
+    } catch (error) {
+      console.error('Calculation error:', error);
+      return 'Error';
+    }
+  }, []);
 
   const clearDisplay = useCallback(() => {
     setDisplay('0');
@@ -88,6 +116,7 @@ export const useCalculator = () => {
   const recallLastResult = useCallback(() => {
     setDisplay(lastResult);
   }, [lastResult]);
+
   return {
     display,
     setDisplay,
@@ -97,7 +126,9 @@ export const useCalculator = () => {
     setMode,
     isDarkMode,
     lastResult,
+    setLastResult,
     calculate,
+    calculateOnly,
     clearDisplay,
     clearAll,
     memoryAdd,
