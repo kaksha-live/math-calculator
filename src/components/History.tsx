@@ -8,10 +8,10 @@ interface HistoryProps {
   onSelectHistoryItem: (item: CalculationHistory) => void;
 }
 
-export const History: React.FC<HistoryProps> = ({ 
-  history, 
+export const History: React.FC<HistoryProps> = ({
+  history,
   onClearHistory,
-  onSelectHistoryItem 
+  onSelectHistoryItem
 }) => {
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
   const [copiedItem, setCopiedItem] = useState<string | null>(null);
@@ -49,6 +49,7 @@ export const History: React.FC<HistoryProps> = ({
           <HistoryIcon size={20} className="text-gray-600" />
           <h2 className="text-lg font-semibold text-gray-800">History</h2>
           <span className="text-sm text-gray-500">({history.length})</span>
+          <span className="text-xs text-gray-400 ml-2">(Newest first)</span>
         </div>
         <button
           onClick={onClearHistory}
@@ -58,7 +59,7 @@ export const History: React.FC<HistoryProps> = ({
           Clear
         </button>
       </div>
-      
+
       <div className="space-y-2 max-h-80 overflow-y-auto">
         {history.map((item) => (
           <div
@@ -94,14 +95,19 @@ export const History: React.FC<HistoryProps> = ({
                     <div className="bg-gray-100 px-2 py-1 rounded text-xs font-medium">
                       {item.mode.toUpperCase()}
                     </div>
-                    <div className="mt-1">
-                      {item.timestamp.toLocaleTimeString()}
+                    <div className="mt-1 text-xs">
+                      {item.timestamp.toLocaleString([], {
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            
+
             {/* Expand/Collapse button for long expressions */}
             {item.expression.length > 50 && (
               <button

@@ -43,7 +43,6 @@ export const useCalculator = () => {
         resultStr = result.toString();
       }
 
-      addToHistory(expression, resultStr);
       setDisplay(resultStr);
       setLastResult(resultStr);
       return resultStr;
@@ -52,7 +51,7 @@ export const useCalculator = () => {
       setDisplay('Error');
       return 'Error';
     }
-  }, [addToHistory]);
+  }, []);
 
   // Calculate function that doesn't add to history (for manual history control)
   const calculateOnly = useCallback((expression: string) => {

@@ -170,15 +170,17 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
     // Handle degree mode for trig functions
     if (angleMode === 'DEG') {
       // For forward trig functions (sin, cos, tan) - convert input from degrees to radians
-      fullExpression = fullExpression.replace(/sin\(([^()]+)\)/g, 'sin(($1) * pi / 180)');
-      fullExpression = fullExpression.replace(/cos\(([^()]+)\)/g, 'cos(($1) * pi / 180)');
-      fullExpression = fullExpression.replace(/tan\(([^()]+)\)/g, 'tan(($1) * pi / 180)');
+      // These take angle inputs, so we convert degrees to radians
+      fullExpression = fullExpression.replace(/\bsin\(([^()]*(?:\([^()]*\)[^()]*)*)\)/g, 'sin(($1) * pi / 180)');
+      fullExpression = fullExpression.replace(/\bcos\(([^()]*(?:\([^()]*\)[^()]*)*)\)/g, 'cos(($1) * pi / 180)');
+      fullExpression = fullExpression.replace(/\btan\(([^()]*(?:\([^()]*\)[^()]*)*)\)/g, 'tan(($1) * pi / 180)');
 
       // For inverse trig functions (asin, acos, atan) - convert output from radians to degrees
+      // These take ratio inputs (no conversion needed) but output angles in radians, so convert to degrees
       fullExpression = fullExpression
-        .replace(/asin\(([^)]+)\)/g, '(asin($1) * 180 / pi)')
-        .replace(/acos\(([^)]+)\)/g, '(acos($1) * 180 / pi)')
-        .replace(/atan\(([^)]+)\)/g, '(atan($1) * 180 / pi)');
+        .replace(/\basin\(([^()]*(?:\([^()]*\)[^()]*)*)\)/g, '(asin($1) * 180 / pi)')
+        .replace(/\bacos\(([^()]*(?:\([^()]*\)[^()]*)*)\)/g, '(acos($1) * 180 / pi)')
+        .replace(/\batan\(([^()]*(?:\([^()]*\)[^()]*)*)\)/g, '(atan($1) * 180 / pi)');
     }
 
     console.log('After function conversion:', fullExpression);
