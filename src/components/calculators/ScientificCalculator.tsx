@@ -141,8 +141,8 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
         fullExpression = fullExpression.replace(/\bcos\(/g, 'cos(');
         fullExpression = fullExpression.replace(/\btan\(/g, 'tan(');
         
-        // Convert all trig function arguments from degrees to radians
-        // This handles both direct numbers and nested function results
+        // In DEG mode, convert all trig function inputs to radians
+        // This applies to ALL inputs, whether they're numbers, constants, or function results
         fullExpression = fullExpression.replace(/sin\(([^)]+)\)/g, 'sin(($1) * pi / 180)');
         fullExpression = fullExpression.replace(/cos\(([^)]+)\)/g, 'cos(($1) * pi / 180)');
         fullExpression = fullExpression.replace(/tan\(([^)]+)\)/g, 'tan(($1) * pi / 180)');
@@ -155,6 +155,9 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
       }
       
       console.log('After function conversion:', fullExpression);
+      
+      // Debug: log the expression before degree conversion
+      console.log('Before degree conversion:', fullExpression);
       
       // Fix power function syntax for mathjs
       fullExpression = fullExpression.replace(/pow\(10, ([^)]+)\)/g, 'pow(10, $1)');
