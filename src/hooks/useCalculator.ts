@@ -22,7 +22,9 @@ export const useCalculator = () => {
 
   const calculate = useCallback((expression: string) => {
     try {
+      console.log('Calculating:', expression);
       const result = evaluate(expression);
+      console.log('Result:', result);
       const resultStr = typeof result === 'number' ? 
         (Number.isInteger(result) ? result.toString() : result.toFixed(8).replace(/\.?0+$/, '')) : 
         result.toString();
@@ -31,6 +33,7 @@ export const useCalculator = () => {
       setDisplay(resultStr);
       return resultStr;
     } catch (error) {
+      console.error('Calculation error:', error);
       setDisplay('Error');
       return 'Error';
     }

@@ -118,10 +118,14 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
         fullExpression += display;
       }
       
+      console.log('Original expression:', fullExpression);
+      
       // Replace constants first, before other transformations
       fullExpression = fullExpression
         .replace(/π/g, 'pi')
-        .replace(/\be\b/g, 'e');
+        .replace(/(?<![a-zA-Z])e(?![a-zA-Z])/g, 'e');
+      
+      console.log('After constants:', fullExpression);
       
       // Convert scientific functions to mathjs format
       fullExpression = fullExpression
@@ -132,6 +136,8 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
         .replace(/e\^\(/g, 'exp(')
         .replace(/(\d+)!/g, 'factorial($1)')
         .replace(/(\d+)!/g, 'factorial($1)');
+      
+      console.log('After function conversion:', fullExpression);
       
       // Handle degree mode for trig functions
       if (angleMode === 'DEG') {
@@ -161,6 +167,8 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
       
       // Fix power function syntax for mathjs
       fullExpression = fullExpression.replace(/pow\(10, ([^)]+)\)/g, 'pow(10, $1)');
+      
+      console.log('Final expression:', fullExpression);
       
       const result = calculate(fullExpression);
       setExpression('');
