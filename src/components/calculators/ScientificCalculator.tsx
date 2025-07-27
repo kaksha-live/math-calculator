@@ -29,7 +29,14 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
       setDisplay(num);
       setWaitingForOperand(false);
     } else {
-      setDisplay(display === '0' ? num : display + num);
+      if (num === '.' && display.includes('.')) {
+        return; // Don't add multiple decimal points
+      }
+      if (display === '0' && num !== '.') {
+        setDisplay(num);
+      } else {
+        setDisplay(display + num);
+      }
     }
   };
 
@@ -114,9 +121,9 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
           .replace(/sin\(([^)]+)\)/g, 'sin($1 * pi / 180)')
           .replace(/cos\(([^)]+)\)/g, 'cos($1 * pi / 180)')
           .replace(/tan\(([^)]+)\)/g, 'tan($1 * pi / 180)')
-          .replace(/asin\(([^)]+)\)/g, 'asin($1) * 180 / pi')
-          .replace(/acos\(([^)]+)\)/g, 'acos($1) * 180 / pi')
-          .replace(/atan\(([^)]+)\)/g, 'atan($1) * 180 / pi');
+          .replace(/asin\(([^)]+)\)/g, '(asin($1) * 180 / pi)')
+          .replace(/acos\(([^)]+)\)/g, '(acos($1) * 180 / pi)')
+          .replace(/atan\(([^)]+)\)/g, '(atan($1) * 180 / pi)');
       }
       
       // Fix power function syntax for mathjs
@@ -278,7 +285,14 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
 
         {/* Row 7 */}
         <CalculatorButton value="0" onClick={() => inputNumber('0')} className="col-span-2">0</CalculatorButton>
-        <CalculatorButton value="." onClick={() => inputNumber('.')}>.</CalculatorButton>
+        <CalculatorButton value="." onClick={() => {
+          if (waitingForOperand) {
+            setDisplay('0.');
+            setWaitingForOperand(false);
+          } else if (!display.includes('.')) {
+            setDisplay(display + '.');
+          }
+        }}>.</CalculatorButton>
         <CalculatorButton value="mod" onClick={() => inputOperator(' mod ')} variant="function">mod</CalculatorButton>
         <CalculatorButton value="abs" onClick={() => handleSpecialFunction('|x|')} variant="function">|x|</CalculatorButton>
       </div>
