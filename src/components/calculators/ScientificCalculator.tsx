@@ -22,8 +22,8 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
   recallLastResult,
 }) => {
   const [expression, setExpression] = useState('');
-  const [parenthesesStack, setParenthesesStack] = useState<string[]>([]);
-  const [currentLevel, setCurrentLevel] = useState('');
+  const [displayExpression, setDisplayExpression] = useState('');
+  const [openParenCount, setOpenParenCount] = useState(0);
   const [isInverse, setIsInverse] = useState(false);
   const [angleMode, setAngleMode] = useState<'DEG' | 'RAD'>('DEG');
   const [waitingForOperand, setWaitingForOperand] = useState(false);
@@ -45,42 +45,40 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
   };
 
   const inputOperator = (op: string) => {
-    // Build the full expression including current level
-    const fullCurrentExpression = currentLevel + display;
-    const newExpression = expression + fullCurrentExpression + ' ' + op + ' ';
+    // Add current display to both expression and display expression
+    const newExpression = expression + display + ' ' + op + ' ';
+    const newDisplayExpression = displayExpression + display + ' ' + op + ' ';
+    
     setExpression(newExpression);
-    setCurrentLevel('');
+    setDisplayExpression(newDisplayExpression);
     setWaitingForOperand(true);
   };
 
   const inputOpenParenthesis = () => {
-    // If there's a number in display, add implicit multiplication
+    // If there's a number in display and we're not waiting for operand, add multiplication
     if (!waitingForOperand && display !== '0' && display !== '') {
-      const fullCurrentExpression = currentLevel + display;
-      setExpression(expression + fullCurrentExpression + ' * ');
+      setExpression(expression + display + ' * (');
+      setDisplayExpression(displayExpression + display + ' * (');
+    } else {
+      setExpression(expression + '(');
+      setDisplayExpression(displayExpression + '(');
     }
     
-    // Push current state to stack
-    setParenthesesStack([...parenthesesStack, expression]);
-    setExpression(expression + currentLevel);
-    setCurrentLevel('(');
-    setDisplay('');
+    setOpenParenCount(openParenCount + 1);
+    setDisplay('(');
     setWaitingForOperand(false);
   };
 
   const inputCloseParenthesis = () => {
-    if (parenthesesStack.length === 0) return; // No matching open parenthesis
+    if (openParenCount === 0) return; // No matching open parenthesis
     
-    // Complete current level
-    const fullCurrentExpression = currentLevel + display + ')';
+    // Add current display and closing parenthesis to both expressions
+    const newExpression = expression + display + ')';
+    const newDisplayExpression = displayExpression + display + ')';
     
-    // Pop from stack
-    const previousExpression = parenthesesStack[parenthesesStack.length - 1];
-    setParenthesesStack(parenthesesStack.slice(0, -1));
-    
-    // Update expression and display
-    setExpression(previousExpression);
-    setCurrentLevel(fullCurrentExpression);
+    setExpression(newExpression);
+    setDisplayExpression(newDisplayExpression);
+    setOpenParenCount(openParenCount - 1);
     setDisplay(')');
     setWaitingForOperand(true);
   };
@@ -122,8 +120,6 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
   };
 
   const inputFactorial = () => {
-    const fullCurrentExpression = currentLevel + display + '!';
-    setCurrentLevel(fullCurrentExpression);
     setDisplay(display + '!');
     setWaitingForOperand(true);
   };
@@ -137,12 +133,8 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
     }
   };
 
-  const getFullExpression = () => {
-    return expression + currentLevel + display;
-  };
-
   const performCalculation = () => {
-    let fullExpression = getFullExpression();
+    let fullExpression = expression + display;
     
     if (fullExpression.trim() === '') {
       fullExpression = display;
@@ -188,8 +180,8 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
       
     const result = calculate(fullExpression);
     setExpression('');
-    setCurrentLevel('');
-    setParenthesesStack([]);
+    setDisplayExpression('');
+    setOpenParenCount(0);
     setWaitingForOperand(true);
   };
 
@@ -237,25 +229,25 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
   const handleClear = () => {
     clearDisplay();
     setExpression('');
-    setCurrentLevel('');
-    setParenthesesStack([]);
+    setDisplayExpression('');
+    setOpenParenCount(0);
     setWaitingForOperand(false);
   };
 
   const handleAllClear = () => {
     clearAll();
     setExpression('');
-    setCurrentLevel('');
-    setParenthesesStack([]);
+    setDisplayExpression('');
+    setOpenParenCount(0);
     setWaitingForOperand(false);
     setIsInverse(false);
   };
 
-  // Create display expression for user
-  const displayExpression = expression + currentLevel + (waitingForOperand ? '' : display);
+  // Show the display expression with current input
+  const fullDisplayExpression = displayExpression + (waitingForOperand ? '' : display);
   return (
     <div className="max-w-2xl mx-auto">
-      <Display value={display} memory={memory} expression={displayExpression} />
+      <Display value={display} memory={memory} expression={fullDisplayExpression} />
       
       {/* Mode indicators */}
       <div className="flex gap-2 mb-4 text-sm">
@@ -271,6 +263,11 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
         >
           INV
         </button>
+        {openParenCount > 0 && (
+          <div className="px-3 py-1 bg-yellow-200 text-yellow-800 rounded text-xs">
+            {openParenCount} open paren{openParenCount > 1 ? 's' : ''}
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-6 gap-2">
