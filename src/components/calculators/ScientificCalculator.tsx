@@ -135,17 +135,17 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
       
       // Handle degree mode for trig functions
       if (angleMode === 'DEG') {
-        // In DEG mode, ALL trig function inputs should be treated as degrees
-        // This includes nested functions - the output of one trig function becomes degree input to the next
-        fullExpression = fullExpression.replace(/\bsin\(/g, 'sin(');
-        fullExpression = fullExpression.replace(/\bcos\(/g, 'cos(');
-        fullExpression = fullExpression.replace(/\btan\(/g, 'tan(');
+        // In DEG mode, convert direct numeric inputs to radians, but treat function outputs as degrees
+        // First pass: convert direct numeric/constant inputs to radians
+        fullExpression = fullExpression.replace(/sin\((\d+\.?\d*|pi|e)\)/g, 'sin(($1) * pi / 180)');
+        fullExpression = fullExpression.replace(/cos\((\d+\.?\d*|pi|e)\)/g, 'cos(($1) * pi / 180)');
+        fullExpression = fullExpression.replace(/tan\((\d+\.?\d*|pi|e)\)/g, 'tan(($1) * pi / 180)');
         
-        // In DEG mode, convert all trig function inputs to radians
-        // This applies to ALL inputs, whether they're numbers, constants, or function results
-        fullExpression = fullExpression.replace(/sin\(([^)]+)\)/g, 'sin(($1) * pi / 180)');
-        fullExpression = fullExpression.replace(/cos\(([^)]+)\)/g, 'cos(($1) * pi / 180)');
-        fullExpression = fullExpression.replace(/tan\(([^)]+)\)/g, 'tan(($1) * pi / 180)');
+        // Second pass: for nested functions, the inner result should be treated as degrees for the outer function
+        // This handles cases like sin(cos(45)) where cos(45) result should be treated as degrees for sin
+        fullExpression = fullExpression.replace(/sin\((cos\([^)]+\)|sin\([^)]+\)|tan\([^)]+\))\)/g, 'sin(($1) * pi / 180)');
+        fullExpression = fullExpression.replace(/cos\((cos\([^)]+\)|sin\([^)]+\)|tan\([^)]+\))\)/g, 'cos(($1) * pi / 180)');
+        fullExpression = fullExpression.replace(/tan\((cos\([^)]+\)|sin\([^)]+\)|tan\([^)]+\))\)/g, 'tan(($1) * pi / 180)');
         
         // Handle inverse trig functions (output angle in degrees)
         fullExpression = fullExpression
@@ -155,14 +155,6 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
       }
       
       console.log('After function conversion:', fullExpression);
-      
-      // Debug: log the expression before degree conversion
-      console.log('Before degree conversion:', fullExpression);
-      
-      // Fix power function syntax for mathjs
-      fullExpression = fullExpression.replace(/pow\(10, ([^)]+)\)/g, 'pow(10, $1)');
-      
-      console.log('Final expression:', fullExpression);
       
       const result = calculate(fullExpression);
       setExpression('');
