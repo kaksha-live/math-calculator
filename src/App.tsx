@@ -28,11 +28,8 @@ function App() {
     memoryRecall,
     memoryClear,
     toggleDarkMode,
+    clearHistory,
   } = calculator;
-
-  const clearHistory = () => {
-    // This would need to be implemented in the useCalculator hook
-  };
 
   const handleHistoryItemSelect = (item: any) => {
     setDisplay(item.result);

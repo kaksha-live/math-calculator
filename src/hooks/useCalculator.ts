@@ -42,7 +42,6 @@ export const useCalculator = () => {
 
   const clearAll = useCallback(() => {
     setDisplay('0');
-    setMemory(0);
   }, []);
 
   const memoryAdd = useCallback(() => {
@@ -59,6 +58,10 @@ export const useCalculator = () => {
 
   const memoryClear = useCallback(() => {
     setMemory(0);
+  }, []);
+
+  const clearHistory = useCallback(() => {
+    setHistory([]);
   }, []);
 
   const toggleDarkMode = useCallback(() => {
@@ -82,5 +85,6 @@ export const useCalculator = () => {
     memoryClear,
     toggleDarkMode,
     addToHistory,
+    clearHistory,
   };
 };

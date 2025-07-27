@@ -54,7 +54,8 @@ export const StandardCalculator: React.FC<StandardCalculatorProps> = ({
 
   const performCalculation = () => {
     if (expression !== '') {
-      calculate(expression + display);
+      const result = calculate(expression + display);
+      setDisplay(result);
       setExpression('');
       setWaitingForOperand(true);
     }
@@ -86,13 +87,19 @@ export const StandardCalculator: React.FC<StandardCalculatorProps> = ({
     setWaitingForOperand(false);
   };
 
+  const handleAllClear = () => {
+    clearAll();
+    setExpression('');
+    setWaitingForOperand(false);
+  };
+
   return (
     <div className="max-w-md mx-auto">
       <Display value={display} memory={memory} expression={expression} />
       
       <div className="grid grid-cols-4 gap-3">
         {/* Row 1 */}
-        <CalculatorButton value="AC" onClick={clearAll} variant="clear">AC</CalculatorButton>
+        <CalculatorButton value="AC" onClick={handleAllClear} variant="clear">AC</CalculatorButton>
         <CalculatorButton value="C" onClick={handleClear} variant="clear">C</CalculatorButton>
         <CalculatorButton value="±" onClick={toggleSign} variant="operator">±</CalculatorButton>
         <CalculatorButton value="÷" onClick={() => inputOperator('/')} variant="operator">÷</CalculatorButton>
