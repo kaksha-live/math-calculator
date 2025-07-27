@@ -268,18 +268,22 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
         <CalculatorButton value="√" onClick={() => handleSpecialFunction('√')} variant="function">√x</CalculatorButton>
         <CalculatorButton value="^" onClick={() => inputOperator('^')} variant="function">xʸ</CalculatorButton>
         <CalculatorButton value="(" onClick={() => {
-          if (waitingForOperand || display === '0') {
-            setDisplay('(');
-            setWaitingForOperand(false);
-          } else {
-            setDisplay(display + '(');
-          }
+          // Add opening parenthesis to expression
+          const newExpression = expression + display + '(';
+          setExpression(newExpression);
+          setDisplay('0');
+          setWaitingForOperand(false);
         }} variant="operator">(</CalculatorButton>
 
         {/* Row 3 */}
         <CalculatorButton value="AC" onClick={handleAllClear} variant="clear">AC</CalculatorButton>
         <CalculatorButton value="C" onClick={handleClear} variant="clear">C</CalculatorButton>
-        <CalculatorButton value=")" onClick={() => inputNumber(')')} variant="operator">)</CalculatorButton>
+        <CalculatorButton value=")" onClick={() => {
+          // Add closing parenthesis to expression
+          const newExpression = expression + display + ')';
+          setExpression(newExpression);
+          setWaitingForOperand(true);
+        }} variant="operator">)</CalculatorButton>
         <CalculatorButton value="/" onClick={() => inputOperator('/')} variant="operator">÷</CalculatorButton>
         <CalculatorButton value="*" onClick={() => inputOperator('*')} variant="operator">×</CalculatorButton>
         <CalculatorButton value="DEL" onClick={() => {
