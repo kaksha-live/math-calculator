@@ -10,7 +10,6 @@ A comprehensive, professional-grade calculator suite built with React, TypeScrip
 - **Standard Calculator**: Basic arithmetic operations with memory functions
 - **Scientific Calculator**: Advanced mathematical functions, trigonometry, logarithms, and more
 - **Graphing Calculator**: Plot mathematical functions with customizable viewing windows
-- **Financial Calculator**: Loan payments, compound interest, and investment calculations
 - **Unit Converter**: Convert between various units (length, weight, temperature, area, volume, time)
 
 ### 🎨 User Experience

@@ -11,7 +11,6 @@ const modes: { id: CalculatorMode; label: string; icon: React.ReactNode }[] = [
   { id: 'standard', label: 'Standard', icon: <Calculator size={18} /> },
   { id: 'scientific', label: 'Scientific', icon: <Sigma size={18} /> },
   { id: 'graphing', label: 'Graphing', icon: <TrendingUp size={18} /> },
-  { id: 'financial', label: 'Financial', icon: <DollarSign size={18} /> },
   { id: 'conversion', label: 'Convert', icon: <ArrowLeftRight size={18} /> },
 ];
 

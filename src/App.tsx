@@ -1,10 +1,8 @@
-import { Moon, Sun, Calculator as CalcIcon } from 'lucide-react';
 import { useCalculator } from './hooks/useCalculator';
 import { ModeSelector } from './components/ModeSelector';
 import { StandardCalculator } from './components/calculators/StandardCalculator';
 import { ScientificCalculator } from './components/calculators/ScientificCalculator';
 import { GraphingCalculator } from './components/calculators/GraphingCalculator';
-import { FinancialCalculator } from './components/calculators/FinancialCalculator';
 import { ConversionCalculator } from './components/calculators/ConversionCalculator';
 import { History } from './components/History';
 
@@ -82,9 +80,7 @@ function App() {
               <GraphingCalculator calculate={calculate} />
             )}
 
-            {mode === 'financial' && (
-              <FinancialCalculator calculate={calculate} />
-            )}
+         
 
             {mode === 'conversion' && (
               <ConversionCalculator calculate={calculate} />
