@@ -42,33 +42,7 @@ function App() {
       }`}>
       <div className="container mx-auto px-4 py-6">
         {/* Header */}
-        <header className="flex flex-col sm:flex-row items-center justify-between mb-8">
-          <div className="flex items-center gap-3 mb-4 sm:mb-0">
-            <div className="p-2 bg-white/20 backdrop-blur-sm rounded-lg">
-              <CalcIcon size={32} className={isDarkMode ? 'text-white' : 'text-blue-600'} />
-            </div>
-            <div>
-              <h1 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
-                SwiftCalc
-              </h1>
-              <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                Professional calculator suite for all your needs
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <button
-              onClick={toggleDarkMode}
-              className={`p-3 rounded-lg transition-all duration-200 ${isDarkMode
-                ? 'bg-white/20 text-white hover:bg-white/30'
-                : 'bg-white/80 text-gray-700 hover:bg-white shadow-md'
-                }`}
-            >
-              {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
-            </button>
-          </div>
-        </header>
+       
 
         {/* Mode Selector */}
         <ModeSelector currentMode={mode} onModeChange={setMode} />
@@ -127,11 +101,6 @@ function App() {
           </div>
         </div>
 
-        {/* Footer */}
-        <footer className={`mt-12 text-center text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-          <p className="mb-2">© 2025 SwiftCalc. Built with React, TypeScript & Tailwind CSS.</p>
-          <p className="mt-1">Professional-grade calculator suite for education, business, and personal use.</p>
-        </footer>
       </div>
     </div>
   );

@@ -97,7 +97,7 @@ export const StandardCalculator: React.FC<StandardCalculatorProps> = ({
     <div className="max-w-md mx-auto">
       <Display value={display} memory={memory} expression={expression} />
       
-      <div className="grid grid-cols-4 gap-3">
+      <div className="grid grid-cols-4 ">
         {/* Row 1 */}
         <CalculatorButton value="AC" onClick={handleAllClear} variant="clear">AC</CalculatorButton>
         <CalculatorButton value="C" onClick={handleClear} variant="clear">C</CalculatorButton>

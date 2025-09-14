@@ -285,7 +285,7 @@ export const ScientificCalculator: React.FC<ScientificCalculatorProps> = ({
         )}
       </div>
 
-      <div className="grid grid-cols-6 gap-2">
+      <div className="grid grid-cols-6">
         {/* Row 1 - Functions */}
         <CalculatorButton value="sin" onClick={() => inputFunction('sin')} variant="function">
           {isInverse ? 'sin⁻¹' : 'sin'}
