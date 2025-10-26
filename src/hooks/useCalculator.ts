@@ -43,9 +43,9 @@ export const useCalculator = () => {
         resultStr = result.toString();
       }
 
-      setDisplay(resultStr);
-      setLastResult(resultStr);
-      return resultStr;
+      setDisplay(result);
+      setLastResult(result);
+      return result;
     } catch (error) {
       console.error('Calculation error:', error);
       setDisplay('Error');
